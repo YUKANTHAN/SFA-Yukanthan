@@ -2,3 +2,5 @@ node_modules/
 *.d.mts
 *.d.ts
 *.d.cts
+.env.local
+.env*.local

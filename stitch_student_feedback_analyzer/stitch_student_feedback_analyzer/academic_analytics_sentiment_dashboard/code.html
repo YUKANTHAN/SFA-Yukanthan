@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-background":"#0b1c30","on-tertiary":"#ffffff","on-tertiary-fixed-variant":"#005236","inverse-primary":"#bec6e0","background":"#f8f9ff","primary":"#000000","primary-fixed":"#dae2fd","outline-variant":"#c6c6cd","on-secondary-fixed":"#0f0069","surface-container-low":"#eff4ff","surface-tint":"#565e74","tertiary-container":"#002113","primary-fixed-dim":"#bec6e0","secondary-fixed":"#e2dfff","on-primary-container":"#7c839b","surface-container-high":"#dce9ff","on-secondary":"#ffffff","on-tertiary-container":"#009668","surface-container":"#e5eeff","inverse-surface":"#213145","tertiary-fixed":"#6ffbbe","on-secondary-fixed-variant":"#3323cc","primary-container":"#131b2e","tertiary-fixed-dim":"#4edea3","on-primary-fixed-variant":"#3f465c","surface-dim":"#cbdbf5","secondary-container":"#645efb","surface-container-highest":"#d3e4fe","on-primary-fixed":"#131b2e","surface":"#f8f9ff","inverse-on-surface":"#eaf1ff","surface-variant":"#d3e4fe","on-tertiary-fixed":"#002113","secondary":"#4b41e1","on-error":"#ffffff","secondary-fixed-dim":"#c3c0ff","error-container":"#ffdad6","surface-container-lowest":"#ffffff","error":"#ba1a1a","on-primary":"#ffffff","on-surface-variant":"#45464d","on-error-container":"#93000a","on-secondary-container":"#fffbff","on-surface":"#0b1c30","tertiary":"#000000","outline":"#76777d","surface-bright":"#f8f9ff"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xl":"2.5rem","space-xs":"0.25rem","space-lg":"1.5rem","gutter-lg":"2rem","gutter-sm":"1rem","margin-lg":"3rem","gutter":"1.5rem","margin":"2rem","space-md":"1rem","margin-sm":"1rem","space-sm":"0.5rem"},fontFamily:{"headline-sm":["Inter"],"metric-xl":["Inter"],"label-sm":["Inter"],"headline-md":["Inter"],"metric-lg":["Inter"],"label-md":["Inter"],"headline-lg":["Inter"],"body-lg":["Inter"],"body-sm":["Inter"],"body-md":["Inter"],"display-lg":["Inter"],"headline-xl":["Inter"],"display-lg-mobile":["Inter"],"headline-xl-mobile":["Inter"]},fontSize:{"headline-sm":["16px",{lineHeight:"24px",fontWeight:"600"}],"metric-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.02em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.005em",fontWeight:"600"}],"metric-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.04em",fontWeight:"600"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"body-sm":["13px",{lineHeight:"18px",fontWeight:"400"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}],"display-lg":["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-xl":["30px",{lineHeight:"38px",letterSpacing:"-0.015em",fontWeight:"600"}],"display-lg-mobile":["30px",{lineHeight:"38px",letterSpacing:"-0.015em",fontWeight:"700"}],"headline-xl-mobile":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-primary-container text-on-secondary z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.06)]"><div class="flex flex-col"><div class="h-16 flex items-center gap-space-sm px-space-md bg-inverse-surface/40"><img alt="EduPulse Analytics Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Vs2L3lBmWg6i_SIURsVTGq5efVUT7PY0np6Be-slHCP1yNL5pEkfUWJo3Ln7jl7MIt-z7ibqCS3T2tFqfDAqoc7GXQFgDIAAWDuEsbbBREsjsGQf_f6Cajx-IrIutS1aNo-pbdrfGPxV_AhLceWHX8NV4t_CgFV8bZatvPnXt_4HgsKlivEg8oef23bV-tI134dG7jcNHSCj_0UnMUM_XQCZSfTpRzBYDVuZlJaTOS6hhHUrXniXYkL1c"/><span class="font-headline-sm text-headline-sm tracking-tight text-on-secondary">EduPulse Academic</span></div><nav class="flex flex-col gap-space-xs p-space-sm mt-space-sm" data-active-classes="bg-secondary text-on-secondary font-headline-sm shadow-[0_1px_3px_0_rgba(15,23,42,0.05)]"><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors bg-secondary text-on-secondary font-headline-sm shadow-[0_1px_3px_0_rgba(15,23,42,0.05)]" data-path="analytics-dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-body-md text-body-md flex-1">Dashboard</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-inverse-on-surface/80 hover:bg-inverse-surface hover:text-inverse-on-surface transition-colors" data-path="feedback-management" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">chat_bubble</span><span class="font-body-md text-body-md">Feedback</span></div><span class="inline-flex items-center px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">1,248</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-inverse-on-surface/80 hover:bg-inverse-surface hover:text-inverse-on-surface transition-colors" data-path="analytics-explorer" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-body-md text-body-md flex-1">Analytics</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-inverse-on-surface/80 hover:bg-inverse-surface hover:text-inverse-on-surface transition-colors" data-path="portal-settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-md text-body-md flex-1">Settings</span></a></nav></div><div class="p-space-sm"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-inverse-on-surface/70 hover:bg-inverse-surface hover:text-inverse-on-surface transition-colors" data-path="admin-login" href="#"><span class="material-symbols-outlined text-[20px]">logout</span><span class="font-body-md text-body-md">Logout</span></a></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant"><span class="hover:text-on-surface cursor-pointer">Institutional Portal</span><span class="material-symbols-outlined text-[16px]">chevron_right</span><span class="text-on-surface font-semibold">Academic Quality</span></div><div class="hidden lg:flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-xs rounded-lg text-on-surface font-body-sm text-body-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">date_range</span><span>Fall Semester 2024</span><span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-xs rounded-lg text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-body-sm text-body-sm">Search corpus, faculties, codes...</span><span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">⌘K</span></div><button aria-label="Notifications" class="relative p-space-xs rounded-lg hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-space-sm pl-space-sm"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3-__djhHSnm38_4ob_a3RHHcBvlDiMdrFhjieE1r4QDF5Oo87SRX4OTwEtbI1D0LPNs6IH2QxU_fNnI1j5SpMfgYZMwvF5b-lEywoisbKuD2vwEqE7JnptgihvDYzm4oPWbR1cRhtjRQKc_DEoGQZFB0n3yNJ_0j0-NsNOszUzuoBMPocXx-MQASzbKRypR75qHGNoltJjRE3IeBUrh98gkf1wcVBb22pzU19hiHjeVtL5oIc33nh"/><div class="hidden sm:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface leading-tight">Dr. Eleanor Vance</span><span class="font-label-sm text-label-sm text-on-surface-variant">Dean of Academic Quality</span></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen px-gutter py-gutter"><div class="flex flex-col w-full gap-gutter">
+<!-- Top Dashboard Controls -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+<span>Evaluations</span>
+<span>•</span>
+<span>Executive Oversight</span>
+<span>•</span>
+<span class="text-secondary font-semibold">Live Feed Active</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight mt-0.5">
+        Institutional Academic Pulse & Feedback Overview
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+        Aggregated student response corpus across 14 faculties, clinical assessments, and laboratory sections.
+      </p>
+</div>
+<!-- Control Actions -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Term Selector -->
+<div class="flex items-center bg-surface-container-lowest px-space-md py-space-xs rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant mr-space-xs">calendar_month</span>
+<select class="bg-transparent font-body-sm text-body-sm text-on-surface focus:outline-none cursor-pointer">
+<option selected="">Fall Semester 2024</option>
+<option>Spring Semester 2024</option>
+<option>Fall Semester 2023</option>
+<option>Annual Retrospective 2023-2024</option>
+</select>
+</div>
+<!-- Department Selector -->
+<div class="flex items-center bg-surface-container-lowest px-space-md py-space-xs rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant mr-space-xs">account_balance</span>
+<select class="bg-transparent font-body-sm text-body-sm text-on-surface focus:outline-none cursor-pointer">
+<option selected="">All Departments</option>
+<option>School of Engineering & Computing</option>
+<option>Faculty of Natural Sciences</option>
+<option>Department of Mathematics</option>
+<option>School of Humanities & Design</option>
+</select>
+</div>
+<!-- Export Report Action -->
+<div class="relative inline-block" id="exportMenuWrapper">
+<button class="flex items-center gap-space-xs bg-primary text-on-primary font-headline-sm text-headline-sm px-space-md py-space-xs rounded-xl shadow-sm hover:bg-inverse-surface transition-all" id="exportBtn">
+<span class="material-symbols-outlined text-[18px]">ios_share</span>
+<span>Export Report</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-xl z-30 py-space-xs" id="exportDropdown">
+<a class="flex items-center gap-space-xs px-space-md py-space-xs font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] text-error">picture_as_pdf</span>
+<span>Comprehensive PDF</span>
+</a>
+<a class="flex items-center gap-space-xs px-space-md py-space-xs font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container">table_chart</span>
+<span>Raw Verbatim CSV</span>
+</a>
+<a class="flex items-center gap-space-xs px-space-md py-space-xs font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] text-secondary">analytics</span>
+<span>SPSS / R Data Matrix</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- 4 Key Metric KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
+<!-- Card 1: Total Responses -->
+<div class="flex flex-col justify-between bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Responses</span>
+<span class="p-2 rounded-xl bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="font-metric-xl text-metric-xl text-on-surface tracking-tight">14,820</div>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container-low text-on-tertiary-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +12.4%
+          </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">vs last term</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/50 rounded-xl p-space-sm">
+<div class="flex justify-between items-center font-label-sm text-label-sm mb-1.5">
+<span class="text-on-surface-variant">Cohort Completion Rate</span>
+<span class="font-semibold text-on-surface">84.2%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 84.2%"></div>
+</div>
+</div>
+</div>
+<!-- Card 2: Average Rating -->
+<div class="flex flex-col justify-between bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Average Rating</span>
+<span class="p-2 rounded-xl bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-[20px]">hotel_class</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="flex items-baseline gap-1">
+<span class="font-metric-xl text-metric-xl text-on-surface tracking-tight">4.32</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/ 5.0</span>
+</div>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<div class="flex items-center text-amber-500">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold">+0.18pts</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/50 rounded-xl p-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Institutional Target</span>
+<span class="font-label-sm text-label-sm font-semibold text-secondary">Target: 4.20 ★ (Met)</span>
+</div>
+</div>
+<!-- Card 3: Positive Feedback -->
+<div class="flex flex-col justify-between bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Positive Feedback</span>
+<span class="p-2 rounded-xl bg-surface-container-low text-on-tertiary-container">
+<span class="material-symbols-outlined text-[20px]">thumb_up</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="font-metric-xl text-metric-xl text-on-tertiary-container tracking-tight">71.8%</div>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container-low text-on-tertiary-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +3.9%
+          </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">10,640 comments</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/50 rounded-xl p-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sentiment Net Score</span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">+62.4 NPS-E</span>
+</div>
+</div>
+<!-- Card 4: Negative / Issues -->
+<div class="flex flex-col justify-between bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Negative / Issues</span>
+<span class="p-2 rounded-xl bg-error-container text-error">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="font-metric-xl text-metric-xl text-error tracking-tight">9.4%</div>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container-low text-on-tertiary-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span> -2.1%
+          </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">1,393 issues flagged</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low/50 rounded-xl p-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Urgent Escalations</span>
+<span class="font-label-sm text-label-sm font-semibold text-error">18 Pending Dean Review</span>
+</div>
+</div>
+</div>
+<!-- Data Visualizations Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Visual 1: Rating Distribution (Vertical Bar Chart) -->
+<div class="lg:col-span-6 xl:col-span-5 bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Likert Breakdown</span>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-0.5">Rating Distribution (1 to 5 Stars)</h2>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container px-space-xs py-0.5 rounded-md text-on-surface">N=14,820</span>
+</div>
+<!-- Chart Content Area -->
+<div class="my-space-lg">
+<div class="h-56 flex items-end justify-between gap-space-sm pt-space-md px-2">
+<!-- 1 Star -->
+<div class="group flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-on-surface font-semibold">4%</div>
+<div class="w-full bg-surface-container rounded-t-lg transition-all duration-300 group-hover:bg-error" style="height: 12%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium flex items-center gap-0.5">1★</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">592</span>
+</div>
+<!-- 2 Stars -->
+<div class="group flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-on-surface font-semibold">5%</div>
+<div class="w-full bg-surface-container rounded-t-lg transition-all duration-300 group-hover:bg-amber-500" style="height: 16%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium flex items-center gap-0.5">2★</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">741</span>
+</div>
+<!-- 3 Stars -->
+<div class="group flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-on-surface font-semibold">9%</div>
+<div class="w-full bg-surface-container rounded-t-lg transition-all duration-300 group-hover:bg-amber-400" style="height: 24%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium flex items-center gap-0.5">3★</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">1,334</span>
+</div>
+<!-- 4 Stars -->
+<div class="group flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-on-surface font-semibold">24%</div>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all duration-300 group-hover:bg-secondary" style="height: 52%;"></div>
+<span class="font-label-sm text-label-sm text-on-surface font-medium flex items-center gap-0.5">4★</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">3,556</span>
+</div>
+<!-- 5 Stars -->
+<div class="group flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<div class="font-label-sm text-label-sm text-secondary group-hover:text-primary font-bold">58%</div>
+<div class="w-full bg-secondary rounded-t-lg transition-all duration-300 group-hover:bg-secondary-container" style="height: 94%;"></div>
+<span class="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-0.5">5★</span>
+<span class="font-label-sm text-[10px] text-secondary font-semibold">8,597</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm bg-surface-container-low px-space-md py-space-xs rounded-xl">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Skewed toward high approval</span>
+<span class="font-label-sm text-label-sm font-semibold text-secondary">82% Positive Core (4-5★)</span>
+</div>
+</div>
+<!-- Visual 2: Overall Sentiment Breakdown (Donut Chart) -->
+<div class="lg:col-span-6 xl:col-span-7 bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Natural Language NLP</span>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-0.5">Overall Sentiment Breakdown</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold bg-surface-container-low px-space-xs py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span> Calibrated 98.4% Precision
+        </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 items-center gap-space-lg my-space-md">
+<!-- SVG Donut Chart with Center KPI -->
+<div class="md:col-span-6 flex justify-center relative">
+<div class="relative w-48 h-48 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90 transform" viewbox="0 0 100 100">
+<!-- Background Ring -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#eff4ff" stroke-width="12"></circle>
+<!-- Positive (71.8%) - Circumference = 2 * pi * 38 = 238.76 => 71.8% of 238.76 = 171.4 -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#009668" stroke-dasharray="171.4 238.8" stroke-dashoffset="0" stroke-linecap="round" stroke-width="12"></circle>
+<!-- Neutral (18.8%) => 18.8% of 238.76 = 44.8 -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#eab308" stroke-dasharray="44.8 238.8" stroke-dashoffset="-171.4" stroke-width="12"></circle>
+<!-- Negative (9.4%) => 9.4% of 238.76 = 22.4 -->
+<circle cx="50" cy="50" fill="transparent" r="38" stroke="#ba1a1a" stroke-dasharray="22.4 238.8" stroke-dashoffset="-216.2" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-metric-lg text-metric-lg text-on-surface leading-none">88%</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold mt-1">Favorable Index</span>
+</div>
+</div>
+</div>
+<!-- Interactive Legend -->
+<div class="md:col-span-6 flex flex-col gap-space-sm">
+<!-- Positive Row -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 rounded-full bg-on-tertiary-container"></span>
+<div>
+<div class="font-headline-sm text-body-md text-on-surface leading-snug">Positive Sentiment</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant">Constructive encouragement & praise</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline-sm text-headline-sm text-on-tertiary-container">71.8%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">10,640 reviews</div>
+</div>
+</div>
+<!-- Neutral Row -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 rounded-full bg-amber-500"></span>
+<div>
+<div class="font-headline-sm text-body-md text-on-surface leading-snug">Neutral / Inquisitive</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant">Descriptive observations without affect</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline-sm text-headline-sm text-amber-600">18.8%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">2,787 reviews</div>
+</div>
+</div>
+<!-- Issues Row -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 rounded-full bg-error"></span>
+<div>
+<div class="font-headline-sm text-body-md text-on-surface leading-snug">Negative / Issues</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant">Bottlenecks, defects & complaints</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline-sm text-headline-sm text-error">9.4%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">1,393 reviews</div>
+</div>
+</div>
+</div>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">info</span>
+<span>Includes confidence weighting factor based on length and syntax complexity.</span>
+</div>
+</div>
+</div>
+<!-- Second Row Visualizations: Category Ratings & Sentiment Trends -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Visual 3: Category-wise Average Ratings (Horizontal Bar Chart) -->
+<div class="lg:col-span-6 bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Dimension Audit</span>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-0.5">Category-wise Average Ratings</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Scale: 1.0 – 5.0★</span>
+</div>
+<div class="flex flex-col gap-space-md my-space-sm">
+<!-- Teaching Quality -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-body-sm">
+<span class="font-headline-sm text-body-md text-on-surface">Teaching Quality</span>
+<span class="font-headline-sm text-body-md text-on-surface">4.6 ★</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 92%;"></div>
+</div>
+</div>
+<!-- Faculty Interaction -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-body-sm">
+<span class="font-headline-sm text-body-md text-on-surface">Faculty Interaction</span>
+<span class="font-headline-sm text-body-md text-on-surface">4.5 ★</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 90%;"></div>
+</div>
+</div>
+<!-- Course Content -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-body-sm">
+<span class="font-headline-sm text-body-md text-on-surface">Course Content</span>
+<span class="font-headline-sm text-body-md text-on-surface">4.4 ★</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 88%;"></div>
+</div>
+</div>
+<!-- Assessment & Exams -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-body-sm">
+<span class="font-headline-sm text-body-md text-on-surface">Assessment & Exams</span>
+<span class="font-headline-sm text-body-md text-on-surface">4.1 ★</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary/80 rounded-full" style="width: 82%;"></div>
+</div>
+</div>
+<!-- Classroom Facilities -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-body-sm">
+<span class="font-headline-sm text-body-md text-on-surface">Classroom Facilities</span>
+<span class="font-headline-sm text-body-md text-on-surface-variant">3.9 ★</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-outline rounded-full" style="width: 78%;"></div>
+</div>
+</div>
+<!-- Lab Facilities (Flagged) -->
+<div class="flex flex-col gap-1 p-2 bg-error-container/20 rounded-xl">
+<div class="flex justify-between items-center text-body-sm">
+<span class="font-headline-sm text-body-md text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+              Lab Facilities (Flagged)
+            </span>
+<span class="font-headline-sm text-body-md text-error">3.4 ★</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 68%;"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs text-body-sm text-on-surface-variant">
+<span>Curricular components benchmark above 4.0</span>
+<span class="text-error font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Labs require Dean review
+        </span>
+</div>
+</div>
+<!-- Visual 4: Feedback Sentiment Trends Over Time (Multi-line SVG Trend Chart) -->
+<div class="lg:col-span-6 bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-xs">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Temporal Dynamic</span>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-0.5">Sentiment Trends Over Time</h2>
+</div>
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm">
+<span class="flex items-center gap-1 text-on-tertiary-container"><span class="w-2.5 h-1 bg-on-tertiary-container rounded"></span> Positive</span>
+<span class="flex items-center gap-1 text-amber-600"><span class="w-2.5 h-1 bg-amber-500 rounded"></span> Neutral</span>
+<span class="flex items-center gap-1 text-error"><span class="w-2.5 h-1 bg-error rounded"></span> Negative</span>
+</div>
+</div>
+<!-- Trend Chart SVG -->
+<div class="relative w-full h-56 my-space-md">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 500 200">
+<defs>
+<lineargradient id="positiveGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#009668" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#009668" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Horizontal reference grids -->
+<line stroke="#eff4ff" stroke-width="1.5" x1="0" x2="500" y1="40" y2="40"></line>
+<line stroke="#eff4ff" stroke-width="1.5" x1="0" x2="500" y1="90" y2="90"></line>
+<line stroke="#eff4ff" stroke-width="1.5" x1="0" x2="500" y1="140" y2="140"></line>
+<!-- Positive Area Fill -->
+<path d="M 0,90 Q 70,75 140,55 T 280,45 T 420,35 L 500,28 L 500,190 L 0,190 Z" fill="url(#positiveGrad)"></path>
+<!-- Positive Trend Line (Curved) -->
+<path d="M 0,90 Q 70,75 140,55 T 280,45 T 420,35 L 500,28" fill="none" stroke="#009668" stroke-linecap="round" stroke-width="3"></path>
+<!-- Neutral Trend Line (Curved) -->
+<path d="M 0,140 Q 80,135 160,138 T 320,135 T 440,142 L 500,140" fill="none" stroke="#eab308" stroke-dasharray="4 2" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Negative Trend Line (Curved) with spike around week 8 (midterms) -->
+<path d="M 0,175 Q 70,170 140,165 T 250,115 T 360,160 L 500,172" fill="none" stroke="#ba1a1a" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Interactive Highlight Marker for Midterm Peak -->
+<circle cx="260" cy="115" fill="#ba1a1a" r="4"></circle>
+</svg>
+<!-- Tooltip Badge for Week 8 Spike -->
+<div class="absolute top-10 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-space-xs py-0.5 rounded shadow-md font-label-sm text-[10px] flex items-center gap-1">
+<span>Wk 8 Midterm Peak: 18.2% Issues</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm pt-space-xs px-1">
+<span>Week 1 (Orientation)</span>
+<span>Week 4</span>
+<span>Week 8 (Midterms)</span>
+<span>Week 11</span>
+<span>Week 14 (Finals Preparation)</span>
+</div>
+</div>
+</div>
+<!-- Critical Highlight Cards (Top 3 Praises vs Top 3 Issues) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Top 3 Praises Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-on-tertiary-container"></div>
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="p-2 rounded-xl bg-surface-container-low text-on-tertiary-container">
+<span class="material-symbols-outlined text-[20px]">recommend</span>
+</span>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Top 3 Praises</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Validated pedagogical strengths</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold bg-surface-container-low px-space-sm py-1 rounded-full">
+            5,720 Total Mentions
+          </span>
+</div>
+<div class="space-y-space-md mt-space-sm">
+<!-- Praise 1 -->
+<div class="p-space-md bg-surface-container-low/60 rounded-xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-on-tertiary-container text-on-tertiary flex items-center justify-center font-label-sm text-[11px] font-bold">1</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Clear & Engaging Teaching</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold">2,410 reviews</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 italic pl-7">
+              “Professors breakdown complex theories with relatable real-world problems and active live demos.”
+            </p>
+</div>
+<!-- Praise 2 -->
+<div class="p-space-md bg-surface-container-low/60 rounded-xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-on-tertiary-container text-on-tertiary flex items-center justify-center font-label-sm text-[11px] font-bold">2</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Helpful & Accessible Faculty</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold">1,890 reviews</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 italic pl-7">
+              “Office hours and TA sessions are well-attended, responsive on Discord/Slack, and highly constructive.”
+            </p>
+</div>
+<!-- Praise 3 -->
+<div class="p-space-md bg-surface-container-low/60 rounded-xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-on-tertiary-container text-on-tertiary flex items-center justify-center font-label-sm text-[11px] font-bold">3</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Interactive Class Discussions</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold">1,420 reviews</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 italic pl-7">
+              “Active learning formats, collaborative peer reviews, and hands-on coding exercises facilitate retention.”
+            </p>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex justify-between items-center text-body-sm text-on-tertiary-container font-semibold">
+<span>Recommend faculty commendations</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</div>
+</div>
+<!-- Top 3 Issues Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-error"></div>
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="p-2 rounded-xl bg-error-container text-error">
+<span class="material-symbols-outlined text-[20px]">report_problem</span>
+</span>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Top 3 Institutional Friction Points</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Prioritized operational interventions</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-error font-semibold bg-error-container px-space-sm py-1 rounded-full">
+            1,489 Urgent Mentions
+          </span>
+</div>
+<div class="space-y-space-md mt-space-sm">
+<!-- Issue 1 -->
+<div class="p-space-md bg-error-container/20 rounded-xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-error text-on-error flex items-center justify-center font-label-sm text-[11px] font-bold">1</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Slow Lab Computers & Software</span>
+</div>
+<span class="font-label-sm text-label-sm text-error font-semibold">614 reviews</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 italic pl-7">
+              “Building C computer lab machines crash during compiler builds; outdated GPU drivers impede ML labs.”
+            </p>
+</div>
+<!-- Issue 2 -->
+<div class="p-space-md bg-error-container/20 rounded-xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-error text-on-error flex items-center justify-center font-label-sm text-[11px] font-bold">2</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Wi-Fi & Network Connectivity</span>
+</div>
+<span class="font-label-sm text-label-sm text-error font-semibold">480 reviews</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 italic pl-7">
+              “Library 3rd floor and Lecture Hall B experience acute dead zones, dropping real-time quizzes mid-session.”
+            </p>
+</div>
+<!-- Issue 3 -->
+<div class="p-space-md bg-error-container/20 rounded-xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-error text-on-error flex items-center justify-center font-label-sm text-[11px] font-bold">3</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Delayed Assignment Grades</span>
+</div>
+<span class="font-label-sm text-label-sm text-error font-semibold">395 reviews</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 italic pl-7">
+              “Midterm grading took over 3 weeks, delaying project milestone feedback before capstone submissions.”
+            </p>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex justify-between items-center text-body-sm text-error font-semibold">
+<span>Dispatch ticket to Facilities & Academic Senate</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Recent Student Feedback Table -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden flex flex-col">
+<!-- Table Controls Header -->
+<div class="p-space-lg flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Recent Student Feedback Stream</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Unfiltered multi-channel submissions with automated NLP categorization.</p>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center bg-surface-container-low px-space-md py-space-xs rounded-xl text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant mr-1">filter_list</span>
+<select class="bg-transparent font-body-sm text-body-sm text-on-surface focus:outline-none cursor-pointer">
+<option>All Sentiments</option>
+<option>Positive Only</option>
+<option>Neutral Only</option>
+<option>Flagged Issues Only</option>
+</select>
+</div>
+<button class="flex items-center gap-1 font-body-sm text-body-sm px-space-md py-space-xs rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Refresh Corpus</span>
+</button>
+</div>
+</div>
+<!-- The Data Table -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-md px-space-lg">Course Code & Name</th>
+<th class="py-space-md px-space-md">Category</th>
+<th class="py-space-md px-space-md">Rating</th>
+<th class="py-space-md px-space-lg">Comment Preview</th>
+<th class="py-space-md px-space-md">Sentiment</th>
+<th class="py-space-md px-space-lg text-right">Date/Time</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low font-body-md text-body-md text-on-surface">
+<!-- Row 1: CS-301 Data Structures -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-md px-space-lg font-headline-sm text-body-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">CS-301 Data Structures</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Prof. A. Thorne • Sec 02</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2.5 py-1 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface">Teaching Quality</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm font-semibold text-amber-600">
+                5.0 ★
+              </span>
+</td>
+<td class="py-space-md px-space-lg max-w-md">
+<p class="truncate text-on-surface-variant">
+                “The tree traversal algorithms were explained exceptionally clearly. Visual trace diagrams made graph recursion finally click!”
+              </p>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-on-tertiary-container font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span> Positive
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+              Oct 24, 14:15
+            </td>
+</tr>
+<!-- Row 2: EE-201 Digital Logic -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-md px-space-lg font-headline-sm text-body-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">EE-201 Digital Logic</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Dr. M. Vasquez • Lab B</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2.5 py-1 rounded-md bg-error-container/40 font-label-sm text-label-sm text-error font-medium">Lab Facilities</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error-container font-label-sm text-label-sm font-semibold text-error">
+                2.0 ★
+              </span>
+</td>
+<td class="py-space-md px-space-lg max-w-md">
+<p class="truncate text-on-surface-variant">
+                “FPGA boards in Room 402 kept throwing synthesis errors due to faulty USB-JTAG cables. We lost 90 minutes of lab time.”
+              </p>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container text-error font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Issue
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+              Oct 24, 11:30
+            </td>
+</tr>
+<!-- Row 3: MATH-202 Multivariable Calculus -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-md px-space-lg font-headline-sm text-body-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">MATH-202 Multivariable Calculus</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Prof. K. Lin • Sec 01</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2.5 py-1 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface">Course Content</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm font-semibold text-amber-600">
+                4.0 ★
+              </span>
+</td>
+<td class="py-space-md px-space-lg max-w-md">
+<p class="truncate text-on-surface-variant">
+                “Stokes Theorem workshop was thorough. Would appreciate more vector field simulation models before midterm 2.”
+              </p>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-on-tertiary-container font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span> Positive
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+              Oct 23, 16:45
+            </td>
+</tr>
+<!-- Row 4: BIO-110 Molecular Bio -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-space-md px-space-lg font-headline-sm text-body-md">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">BIO-110 Molecular Bio</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Dr. C. Rhodes • Lecture A</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2.5 py-1 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface">Assessment & Exams</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm font-semibold text-amber-600">
+                3.0 ★
+              </span>
+</td>
+<td class="py-space-md px-space-lg max-w-md">
+<p class="truncate text-on-surface-variant">
+                “Content was adequate, but questions on cellular respiration in Quiz 3 were phrased ambiguously compared to textbook notes.”
+              </p>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-amber-600 font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Neutral
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+              Oct 23, 09:20
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Bar -->
+<div class="p-space-md bg-surface-container-low/50 flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm font-body-sm text-body-sm text-on-surface-variant">
+<div>
+        Showing <span class="font-semibold text-on-surface">1</span> to <span class="font-semibold text-on-surface">4</span> of <span class="font-semibold text-on-surface">14,820</span> responses
+      </div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded-lg hover:bg-surface-container text-on-surface-variant disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold flex items-center justify-center">1</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center justify-center">2</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center justify-center">3</button>
+<span class="px-1 text-on-surface-variant font-label-sm">...</span>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center justify-center">371</button>
+<button class="p-1 rounded-lg hover:bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple Dropdown Toggle for Export Menu
+  (function() {
+    const exportBtn = document.getElementById('exportBtn');
+    const exportDropdown = document.getElementById('exportDropdown');
+    if (exportBtn && exportDropdown) {
+      exportBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportDropdown.classList.toggle('hidden');
+      });
+      document.addEventListener('click', () => {
+        if (!exportDropdown.classList.contains('hidden')) {
+          exportDropdown.classList.add('hidden');
+        }
+      });
+    }
+  })();
+</script></main></div></body></html>
