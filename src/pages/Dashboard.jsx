@@ -1,181 +1,194 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { fetchFeedbackList, fetchFeedbackThemes, getCurrentAdminSession } from '../lib/supabase';
+import Icon from '../components/Icon';
 import StatCard from '../components/StatCard';
-import RatingChart from '../components/RatingChart';
-import SentimentChart from '../components/SentimentChart';
-import CategoryChart from '../components/CategoryChart';
+import RatingDistribution from '../components/RatingDistribution';
+import SentimentDonut from '../components/SentimentDonut';
+import SentimentTrend from '../components/SentimentTrend';
+import CategoryBars from '../components/CategoryBars';
 import TopInsights from '../components/TopInsights';
 import FeedbackTable from '../components/FeedbackTable';
-import { LayoutDashboard, MessageSquare, Star, Smile, Frown, Meh, RefreshCw, ArrowRight, ShieldAlert } from 'lucide-react';
+import { useAdminSession } from '../hooks/useAdminSession';
+import { fetchFeedbackList, fetchFeedbackThemes } from '../lib/supabase';
+import { attachThemes, summarize } from '../lib/analytics';
+import { BRAND } from '../lib/design';
 
-export default function Dashboard() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [feedbackList, setFeedbackList] = useState([]);
-  const [themesList, setThemesList] = useState([]);
-  const [authorized, setAuthorized] = useState(true);
+const PREVIEW_ROWS = 6;
 
-  useEffect(() => {
-    verifyAndLoadData();
-  }, []);
-
-  const verifyAndLoadData = async () => {
-    setLoading(true);
-    try {
-      const session = await getCurrentAdminSession();
-      if (!session || (!session.data?.session && !session.user)) {
-        setAuthorized(false);
-        setLoading(false);
-        return;
-      }
-      setAuthorized(true);
-
-      const [listData, themesData] = await Promise.all([
-        fetchFeedbackList(),
-        fetchFeedbackThemes()
-      ]);
-
-      setFeedbackList(listData || []);
-      setThemesList(themesData || []);
-    } catch (err) {
-      console.error('Error loading dashboard data:', err);
-    } finally {
-      setLoading(false);
-    }
+function Banner({ tone, icon, children }) {
+  const tones = {
+    warn: 'bg-secondary-container/15 text-on-secondary-container',
+    error: 'bg-error-container text-on-error-container',
   };
 
-  if (loading) {
-    return (
-      <div className="py-20 text-center space-y-3">
-        <RefreshCw size={36} className="animate-spin text-indigo-400 mx-auto" />
-        <p className="text-sm text-slate-400">Loading Supabase analytics dashboard...</p>
-      </div>
-    );
-  }
+  return (
+    <div className={`flex items-start gap-space-sm p-space-md rounded-xl font-body-sm text-body-sm ${tones[tone]}`} role="status">
+      <Icon name={icon} size={18} className="shrink-0 mt-px" />
+      <span>{children}</span>
+    </div>
+  );
+}
 
-  if (!authorized) {
-    return (
-      <div className="max-w-md mx-auto py-16 text-center space-y-4 glass-card p-8 border-rose-500/30">
-        <ShieldAlert size={48} className="text-rose-400 mx-auto" />
-        <h2 className="text-xl font-bold text-white">Access Denied</h2>
-        <p className="text-xs text-slate-300">
-          The Analytics Dashboard is restricted to authenticated Admin users. Please log in first.
-        </p>
-        <button onClick={() => navigate('/login')} className="btn btn-primary btn-sm">
-          Go to Admin Login
-        </button>
-      </div>
-    );
-  }
+function LoadingState() {
+  return (
+    <div className="py-space-xl flex flex-col items-center gap-space-md text-on-surface-variant">
+      <Icon name="progress_activity" size={40} className="animate-spin" />
+      <p className="font-body-md text-body-md">Computing institutional aggregates…</p>
+    </div>
+  );
+}
 
-  // Calculated Stats
-  const totalFeedback = feedbackList.length;
-  const avgRating = totalFeedback > 0 
-    ? (feedbackList.reduce((acc, curr) => acc + curr.rating, 0) / totalFeedback).toFixed(2)
-    : '0.00';
-
-  const positiveCount = feedbackList.filter(f => f.sentiment_label === 'positive').length;
-  const negativeCount = feedbackList.filter(f => f.sentiment_label === 'negative').length;
-  const neutralCount = feedbackList.filter(f => f.sentiment_label === 'neutral').length;
+function AccessDenied() {
+  const navigate = useNavigate();
 
   return (
-    <div className="space-y-8 py-4 animate-fade-in">
-      
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="max-w-md mx-auto py-space-xl text-center space-y-space-md">
+      <span className="inline-flex p-space-lg rounded-2xl bg-error-container text-on-error-container">
+        <Icon name="shield_lock" size={32} />
+      </span>
+      <h2 className="font-headline-md text-headline-md text-on-surface">Admin clearance required</h2>
+      <p className="font-body-md text-body-md text-on-surface-variant">
+        This corpus contains identifiable student submissions and is restricted to authenticated faculty
+        administrators.
+      </p>
+      <button type="button" className="btn-primary" onClick={() => navigate('/login')}>
+        <Icon name="login" size={18} />
+        Go to admin login
+      </button>
+    </div>
+  );
+}
+
+export default function Dashboard() {
+  const { isAdmin, loading: sessionLoading } = useAdminSession();
+
+  const [feedback, setFeedback] = useState([]);
+  const [themes, setThemes] = useState([]);
+  const [degraded, setDegraded] = useState(false);
+  const [notice, setNotice] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [listResult, themeResult] = await Promise.all([fetchFeedbackList(), fetchFeedbackThemes()]);
+
+    setFeedback(listResult.items);
+    setThemes(themeResult.items);
+    setDegraded(listResult.degraded || themeResult.degraded);
+    setNotice(listResult.notice || themeResult.notice);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (isAdmin) load();
+  }, [isAdmin, load]);
+
+  const enriched = useMemo(() => attachThemes(feedback, themes), [feedback, themes]);
+  const stats = useMemo(() => summarize(enriched), [enriched]);
+
+  if (sessionLoading) return <LoadingState />;
+  if (!isAdmin) return <AccessDenied />;
+
+  return (
+    <div className="space-y-gutter py-gutter animate-fade-in">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
         <div>
-          <h1 className="text-3xl font-extrabold text-white flex items-center gap-2">
-            <LayoutDashboard size={28} className="text-indigo-400" />
-            Admin Analytics Dashboard
+          <span className="overline text-secondary">Live Intelligence Feed</span>
+          <h1 className="font-headline-xl-mobile sm:font-headline-xl text-headline-xl text-on-surface mt-1">
+            Institutional Sentiment Overview
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Real-time student feedback statistics & PostgreSQL sentiment metrics
+          <p className="font-body-md text-body-md text-on-surface-variant mt-1">
+            Aggregated student experience signals across {stats.total.toLocaleString('en-US')} verified submissions.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={verifyAndLoadData}
-            className="btn btn-secondary btn-sm flex items-center gap-1.5"
-            title="Refresh analytics data"
-          >
-            <RefreshCw size={14} />
-            Refresh Data
+        <div className="flex items-center gap-space-sm">
+          <button type="button" className="btn-secondary" onClick={load} disabled={loading}>
+            <Icon name="refresh" size={18} className={loading ? 'animate-spin' : ''} />
+            Refresh
           </button>
-
-          <Link to="/details" className="btn btn-primary btn-sm flex items-center gap-1.5">
-            Full Details & Export
-            <ArrowRight size={14} />
+          <Link to="/details" className="btn-primary">
+            Open inspector
+            <Icon name="arrow_forward" size={18} />
           </Link>
         </div>
-      </div>
+      </header>
 
-      {/* KPI Cards Row */}
-      <div className="stat-grid">
+      {degraded && notice && (
+        <Banner tone="warn" icon="cloud_off">
+          {notice}
+        </Banner>
+      )}
+
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <StatCard
-          title="Total Feedback"
-          value={totalFeedback}
-          icon={MessageSquare}
-          color="indigo"
-          subtext="Submissions received"
+          label="Total Responses"
+          value={stats.total.toLocaleString('en-US')}
+          tone="primary"
+          sub={`${stats.ratedCount.toLocaleString('en-US')} carrying a 1–5 rating`}
         />
-
         <StatCard
-          title="Average Rating"
-          value={`${avgRating} / 5`}
-          icon={Star}
-          color="amber"
-          subtext="Overall campus score"
+          label="Average Rating"
+          value={stats.avgRating.toFixed(1)}
+          suffix="/ 5.0"
+          tone="amber"
+          progress={(stats.avgRating / 5) * 100}
+          sub="Campus-wide weighted mean"
         />
-
         <StatCard
-          title="Positive Feedback"
-          value={positiveCount}
-          icon={Smile}
-          color="emerald"
-          subtext={`${totalFeedback ? Math.round((positiveCount/totalFeedback)*100) : 0}% of responses`}
+          label="Positive Sentiment"
+          value={`${stats.positivePct.toFixed(1)}%`}
+          tone="tertiary"
+          progress={stats.positivePct}
+          sub={`${stats.sentimentCounts.positive.toLocaleString('en-US')} constructive responses`}
         />
-
         <StatCard
-          title="Negative Feedback"
-          value={negativeCount}
-          icon={Frown}
-          color="rose"
-          subtext={`${totalFeedback ? Math.round((negativeCount/totalFeedback)*100) : 0}% of responses`}
+          label="Actionable Issues"
+          value={stats.issueCount.toLocaleString('en-US')}
+          tone="error"
+          sub={`${((stats.issueCount / (stats.total || 1)) * 100).toFixed(1)}% of the corpus requires follow-up`}
         />
+      </section>
 
-        <StatCard
-          title="Neutral Feedback"
-          value={neutralCount}
-          icon={Meh}
-          color="slate"
-          subtext={`${totalFeedback ? Math.round((neutralCount/totalFeedback)*100) : 0}% of responses`}
-        />
-      </div>
+      <section className="grid grid-cols-1 xl:grid-cols-12 gap-gutter">
+        <div className="xl:col-span-5">
+          <RatingDistribution counts={stats.ratingCounts} total={stats.total} />
+        </div>
+        <div className="xl:col-span-7">
+          <SentimentDonut counts={stats.sentimentCounts} total={stats.total} />
+        </div>
+      </section>
 
-      {/* Charts Grid Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <RatingChart feedbackList={feedbackList} />
-        <SentimentChart feedbackList={feedbackList} />
-        <CategoryChart feedbackList={feedbackList} />
-      </div>
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+        <SentimentTrend feedback={enriched} />
+        <CategoryBars stats={stats.categoryStats} />
+      </section>
 
-      {/* Recurring Praise & Issue Insights */}
-      <TopInsights themesList={themesList} />
+      <TopInsights feedback={enriched} themes={themes} />
 
-      {/* Recent Feedback Preview Table */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white">Recent Student Submissions</h3>
-          <Link to="/details" className="text-xs text-indigo-400 hover:underline flex items-center gap-1">
-            View All Responses & CSV Export <ArrowRight size={12} />
+      <section className="card p-space-lg">
+        <div className="flex items-center justify-between gap-space-md mb-space-md flex-wrap">
+          <div>
+            <span className="overline text-on-surface-variant">Latest Submissions</span>
+            <h2 className="font-headline-md text-headline-md text-on-surface mt-0.5">
+              Most recent student feedback
+            </h2>
+          </div>
+          <Link to="/details" className="btn-ghost">
+            Inspect all
+            <Icon name="arrow_forward" size={18} />
           </Link>
         </div>
 
-        <FeedbackTable feedbackList={feedbackList} showFilters={false} limit={5} />
-      </div>
+        <FeedbackTable feedback={enriched} maxRows={PREVIEW_ROWS} onSelect={() => {}} />
+      </section>
 
+      <footer className="font-body-sm text-body-sm text-on-surface-variant flex items-center justify-between gap-space-sm pt-space-sm flex-wrap">
+        <span>
+          {BRAND.name} · {BRAND.tagline}
+        </span>
+        <span>Sentiment labels are lexicon-derived. Treat as directional, not diagnostic.</span>
+      </footer>
     </div>
   );
 }

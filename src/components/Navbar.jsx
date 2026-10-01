@@ -1,156 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useAdminSession } from '../hooks/useAdminSession';
+import Icon from './Icon';
+import Logo from './Logo';
 import SupabaseStatusBadge from './SupabaseStatusBadge';
-import { getCurrentAdminSession, logoutAdmin } from '../lib/supabase';
-import { GraduationCap, MessageSquarePlus, LayoutDashboard, LogIn, LogOut, Table, Menu, X } from 'lucide-react';
+
+const NAV_ITEMS = [
+  { to: '/', label: 'Overview' },
+  { to: '/submit', label: 'Submit Feedback' },
+  { to: '/dashboard', label: 'Analytics' },
+  { to: '/details', label: 'Records' },
+];
+
+function navClass({ isActive }) {
+  return `transition-colors ${
+    isActive
+      ? 'text-on-surface font-headline-sm text-headline-sm'
+      : 'font-body-md text-body-md text-on-surface-variant hover:text-on-surface'
+  }`;
+}
 
 export default function Navbar() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAdmin, loading, signOut } = useAdminSession();
+  const { pathname } = useLocation();
 
-  useEffect(() => {
-    checkAdminStatus();
-  }, [location.pathname]);
-
-  const checkAdminStatus = async () => {
-    try {
-      const sessionData = await getCurrentAdminSession();
-      if (sessionData && (sessionData.data?.session || sessionData.user)) {
-        setIsAdminLoggedIn(true);
-      } else {
-        setIsAdminLoggedIn(false);
-      }
-    } catch (err) {
-      setIsAdminLoggedIn(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    await logoutAdmin();
-    setIsAdminLoggedIn(false);
-    navigate('/login');
-  };
-
-  const navItemClass = (path) => {
-    const isActive = location.pathname === path;
-    return `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-      isActive 
-        ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' 
-        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-    }`;
-  };
+  const onAuthSurface = pathname === '/login';
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-8 py-3.5">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        
-        {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="p-2.5 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            <GraduationCap size={22} />
-          </div>
-          <div>
-            <h1 className="text-lg font-extrabold tracking-tight text-white flex items-center gap-2">
-              Feedback<span className="text-indigo-400">Analyzer</span>
-            </h1>
-            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-              Supabase AI Powered
-            </p>
-          </div>
+    <header className="fixed top-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <div className="h-16 max-w-[1600px] mx-auto px-margin flex items-center justify-between gap-space-lg">
+        <Link to="/" className="flex items-center gap-space-md shrink-0">
+          <Logo size={32} />
+          <span className="font-headline-md text-headline-md tracking-tight text-on-surface hidden sm:block">
+            EduPulse Analytics
+          </span>
         </Link>
 
-        {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-1.5">
-          <Link to="/" className={navItemClass('/')}>
-            Home
-          </Link>
-          <Link to="/submit" className={navItemClass('/submit')}>
-            <MessageSquarePlus size={16} />
-            Give Feedback
-          </Link>
-          {isAdminLoggedIn && (
-            <>
-              <Link to="/dashboard" className={navItemClass('/dashboard')}>
-                <LayoutDashboard size={16} />
-                Dashboard
-              </Link>
-              <Link to="/details" className={navItemClass('/details')}>
-                <Table size={16} />
-                Feedback Details
-              </Link>
-            </>
-          )}
+        <nav className="hidden md:flex items-center gap-space-lg">
+          {NAV_ITEMS.map((item) => (
+            <NavLink key={item.to} to={item.to} className={navClass} end={item.to === '/'}>
+              {item.label}
+            </NavLink>
+          ))}
         </nav>
 
-        {/* Right Action buttons & status */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="flex items-center gap-space-sm">
           <SupabaseStatusBadge />
 
-          {isAdminLoggedIn ? (
-            <button onClick={handleLogout} className="btn btn-secondary btn-sm flex items-center gap-1.5 text-rose-400 hover:text-rose-300 border-rose-900/30">
-              <LogOut size={14} />
-              Logout
-            </button>
-          ) : (
-            <Link to="/login" className="btn btn-primary btn-sm flex items-center gap-1.5">
-              <LogIn size={14} />
-              Admin Login
-            </Link>
-          )}
-        </div>
-
-        {/* Mobile menu trigger */}
-        <div className="flex md:hidden items-center gap-2">
-          <SupabaseStatusBadge />
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-slate-400 hover:text-white"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-      </div>
-
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-3 pt-3 border-t border-slate-800 space-y-2 animate-fade-in">
-          <Link to="/" onClick={() => setMobileMenuOpen(false)} className={navItemClass('/')}>
-            Home
-          </Link>
-          <Link to="/submit" onClick={() => setMobileMenuOpen(false)} className={navItemClass('/submit')}>
-            <MessageSquarePlus size={16} />
-            Give Feedback
-          </Link>
-          {isAdminLoggedIn && (
+          {isAdmin && !loading ? (
             <>
-              <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className={navItemClass('/dashboard')}>
-                <LayoutDashboard size={16} />
-                Dashboard
+              <button
+                type="button"
+                onClick={signOut}
+                className="hidden sm:inline-flex items-center gap-1.5 px-space-md py-space-xs rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-e1 hover:bg-surface-container-low hover:text-on-surface transition-colors"
+              >
+                <Icon name="logout" size={16} />
+                Sign Out
+              </button>
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-1.5 w-9 h-9 rounded-full bg-primary-container text-on-secondary justify-center"
+                title={isAdmin ? 'Administrator' : ''}
+              >
+                <Icon name="account_circle" size={20} />
               </Link>
-              <Link to="/details" onClick={() => setMobileMenuOpen(false)} className={navItemClass('/details')}>
-                <Table size={16} />
-                Feedback Details
+            </>
+          ) : onAuthSurface ? null : (
+            <>
+              <Link
+                to="/submit"
+                className="inline-flex items-center justify-center px-space-md py-space-xs rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-e1 hover:bg-surface-container-low transition-colors"
+              >
+                Give Feedback
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center px-space-md py-space-xs rounded-lg bg-primary-container text-on-secondary font-label-md text-label-md shadow-e1 hover:bg-inverse-surface hover:text-inverse-on-surface transition-colors"
+              >
+                Admin Sign In
               </Link>
             </>
           )}
-          <div className="pt-2 border-t border-slate-800 flex justify-between items-center">
-            {isAdminLoggedIn ? (
-              <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="btn btn-secondary btn-sm text-rose-400 w-full">
-                <LogOut size={14} />
-                Logout
-              </button>
-            ) : (
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary btn-sm w-full">
-                <LogIn size={14} />
-                Admin Login
-              </Link>
-            )}
-          </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

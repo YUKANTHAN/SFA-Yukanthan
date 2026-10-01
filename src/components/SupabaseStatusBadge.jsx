@@ -1,91 +1,85 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { isSupabaseConfigured } from '../lib/supabase';
-import { Database, CheckCircle2, AlertTriangle, HelpCircle, X, ExternalLink } from 'lucide-react';
+import Icon from './Icon';
 
+/**
+ * Surfaces whether the app is running against a real Supabase project or the
+ * built-in demo corpus, and carries the setup instructions that were
+ * previously buried in this component.
+ */
 export default function SupabaseStatusBadge() {
-  const [showModal, setShowModal] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const configured = isSupabaseConfigured;
 
   return (
     <>
-      <div 
-        onClick={() => setShowModal(true)}
-        className={`badge cursor-pointer transition-all hover:opacity-90 ${
-          isSupabaseConfigured 
-            ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-500/30' 
-            : 'bg-amber-950/40 text-amber-400 border border-amber-500/30'
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm font-semibold transition-colors ${
+          configured
+            ? 'bg-tertiary-fixed text-on-tertiary-fixed hover:brightness-95'
+            : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
         }`}
-        style={{ cursor: 'pointer' }}
-        title="Click for Supabase Database status & setup instructions"
+        aria-haspopup="dialog"
       >
-        <Database size={13} className="inline mr-1" />
-        {isSupabaseConfigured ? 'Supabase Live' : 'Demo / Local Mode'}
-        {isSupabaseConfigured ? (
-          <CheckCircle2 size={12} className="ml-1 text-emerald-400" />
-        ) : (
-          <AlertTriangle size={12} className="ml-1 text-amber-400" />
-        )}
-      </div>
+        <span className={`w-1.5 h-1.5 rounded-full ${configured ? 'bg-on-tertiary-container' : 'bg-amber-500'}`} />
+        <span className="hidden lg:inline">{configured ? 'Supabase Live' : 'Demo Mode'}</span>
+        <Icon name="help" size={14} />
+      </button>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="glass-card max-w-lg w-full p-6 relative border border-slate-700 shadow-2xl">
-            <button 
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`p-3 rounded-xl ${isSupabaseConfigured ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                <Database size={24} />
-              </div>
+      {open && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-inverse-surface/50 backdrop-blur-sm p-margin"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Data source"
+            className="card w-full max-w-lg rounded-2xl p-space-xl animate-slide-up"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-space-md">
               <div>
-                <h3 className="text-xl font-bold text-white">Database Connection Status</h3>
-                <p className="text-sm text-slate-400">
-                  {isSupabaseConfigured 
-                    ? 'Connected to your Supabase PostgreSQL Database' 
-                    : 'Running in Standalone Local Demo Mode'}
-                </p>
+                <span className="overline text-secondary">Data Source</span>
+                <h2 className="font-headline-lg text-headline-lg text-on-surface mt-1">
+                  {configured ? 'Connected to Supabase' : 'Running on the demo corpus'}
+                </h2>
               </div>
-            </div>
-
-            <div className="space-y-4 text-sm text-slate-300 my-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-              {isSupabaseConfigured ? (
-                <div className="space-y-2">
-                  <p className="text-emerald-300 font-medium flex items-center gap-2">
-                    <CheckCircle2 size={16} /> Live database connection active!
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    Feedback insertions, PostgreSQL sentiment triggers, and admin authentication are operating directly on your Supabase backend.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <p className="text-amber-300 font-semibold flex items-center gap-2">
-                    <AlertTriangle size={16} /> Currently utilizing client-side mock store
-                  </p>
-                  <p className="text-slate-300 text-xs leading-relaxed">
-                    You can fully test all features (Feedback submission, sentiment engine, top praises/issues, admin login with <code className="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300">admin@college.edu</code> / <code className="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300">admin123</code>).
-                  </p>
-
-                  <div className="border-t border-slate-800 pt-3">
-                    <p className="font-semibold text-white mb-1">To connect live Supabase:</p>
-                    <ol className="list-decimal list-inside space-y-1 text-xs text-slate-400">
-                      <li>Create a project on <a href="https://supabase.com" target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline inline-flex items-center gap-0.5">Supabase.com <ExternalLink size={10} /></a></li>
-                      <li>Run the queries in <code className="text-indigo-300">supabase_schema.sql</code> inside SQL Editor</li>
-                      <li>Copy <code className="text-indigo-300">VITE_SUPABASE_URL</code> & <code className="text-indigo-300">VITE_SUPABASE_ANON_KEY</code> into <code className="text-indigo-300">.env.local</code></li>
-                    </ol>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end mt-4">
-              <button onClick={() => setShowModal(false)} className="btn btn-secondary btn-sm">
-                Got it
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="p-1 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"
+                aria-label="Close"
+              >
+                <Icon name="close" size={20} />
               </button>
             </div>
+
+            {!configured && (
+              <ol className="flex flex-col gap-space-sm mt-space-lg text-body-md text-body-md text-on-surface-variant">
+                {[
+                  'Create a Supabase project and copy the project URL and anon key.',
+                  'Run supabase_schema.sql in the Supabase SQL Editor to create tables, RLS policies and the sentiment trigger.',
+                  'Copy .env.example to .env.local and fill in VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.',
+                  'Restart the dev server.',
+                ].map((step, index) => (
+                  <li key={step} className="flex gap-space-sm">
+                    <span className="shrink-0 w-5 h-5 rounded-full bg-surface-container-high text-primary-container font-label-sm text-label-sm flex items-center justify-center">
+                      {index + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+
+            <p className="text-body-sm text-body-sm text-on-surface-variant mt-space-lg p-space-sm rounded-lg bg-surface-container-low">
+              Sentiment and theme extraction run as a PL/pgSQL trigger on the database. Without a
+              configured project they run in the browser against the same rules.
+            </p>
           </div>
         </div>
       )}

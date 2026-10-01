@@ -1,56 +1,49 @@
-import React, { useState } from 'react';
-import { Star } from 'lucide-react';
+import { useState } from 'react';
 
+/**
+ * Likert star control. Material Symbols carries the FILL variation axis, so
+ * filled vs. empty stars are one font with a variable-font toggle.
+ */
 export default function RatingInput({ value, onChange }) {
-  const [hoverRating, setHoverRating] = useState(0);
-
-  const ratingLabels = {
-    1: 'Poor (Needs major improvement)',
-    2: 'Needs Improvement',
-    3: 'Average / Satisfactory',
-    4: 'Good (Exceeds expectations)',
-    5: 'Outstanding / Excellent!'
-  };
-
-  const currentDisplay = hoverRating || value;
+  const [hover, setHover] = useState(0);
+  const shown = hover || value;
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-1.5">
-        {[1, 2, 3, 4, 5].map((star) => {
-          const isSelected = star <= currentDisplay;
-          return (
-            <button
-              key={star}
-              type="button"
-              onClick={() => onChange(star)}
-              onMouseEnter={() => setHoverRating(star)}
-              onMouseLeave={() => setHoverRating(0)}
-              className="star-btn focus:outline-none"
-              title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+    <div
+      className="flex items-center gap-1.5"
+      onMouseLeave={() => setHover(0)}
+      role="radiogroup"
+      aria-label="Overall experience rating"
+    >
+      {[1, 2, 3, 4, 5].map((star) => {
+        const active = star <= shown;
+        return (
+          <button
+            key={star}
+            type="button"
+            role="radio"
+            aria-checked={value === star}
+            aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+            onMouseEnter={() => setHover(star)}
+            onFocus={() => setHover(star)}
+            onBlur={() => setHover(0)}
+            onClick={() => onChange(star)}
+            className="p-1 rounded-md hover:bg-surface-container-highest transition-colors focus:outline-none"
+          >
+            <span
+              className={`material-symbols-outlined text-[36px] transition-transform hover:scale-110 ${
+                active ? 'text-secondary' : 'text-outline-variant'
+              }`}
+              style={{
+                fontSize: '36px',
+                fontVariationSettings: `'FILL' ${active ? 1 : 0}, 'wght' 400, 'GRAD' 0, 'opsz' 36`,
+              }}
             >
-              <Star
-                size={32}
-                className={`transition-all duration-200 ${
-                  isSelected
-                    ? 'text-amber-400 fill-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]'
-                    : 'text-slate-600 hover:text-slate-400'
-                }`}
-              />
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="h-6">
-        {currentDisplay > 0 ? (
-          <span className="inline-block text-xs font-semibold px-2.5 py-1 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 animate-fade-in">
-            {currentDisplay} ★ - {ratingLabels[currentDisplay]}
-          </span>
-        ) : (
-          <span className="text-xs text-slate-500">Select a rating from 1 to 5 stars</span>
-        )}
-      </div>
+              star
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

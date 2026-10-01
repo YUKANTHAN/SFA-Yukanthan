@@ -1,241 +1,136 @@
-import React, { useState } from 'react';
-import { Search, Download, Filter, Star, User, Calendar, Tag, AlertCircle } from 'lucide-react';
+import Icon from './Icon';
+import { COURSES, SENTIMENT } from '../lib/design';
 
-export default function FeedbackTable({ feedbackList, showFilters = true, limit }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedRating, setSelectedRating] = useState('');
-  const [selectedSentiment, setSelectedSentiment] = useState('');
+const DATE_FMT = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: '2-digit' });
 
-  const categories = [
-    'Teaching Quality',
-    'Course Content',
-    'Lab Facilities',
-    'Classroom Facilities',
-    'Assessment / Exams',
-    'Faculty Interaction',
-    'Other'
-  ];
+/** Course strings are stored as "CS-301: Advanced Data..."; prefer the short label. */
+function shortCourse(courseName) {
+  const match = COURSES.find((course) => (courseName || '').startsWith(course.value));
+  return match ? `${match.value} · ${match.short}` : courseName || '—';
+}
 
-  // Filter logic
-  let filteredData = feedbackList.filter(item => {
-    const matchesSearch = 
-      (item.comment && item.comment.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.course_name && item.course_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.faculty_name && item.faculty_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (!item.is_anonymous && item.student_name && item.student_name.toLowerCase().includes(searchTerm.toLowerCase()));
+function Stars({ rating }) {
+  return (
+    <span className="flex items-center gap-0.5" title={`${rating} out of 5`}>
+      {Array.from({ length: 5 }, (_, index) => (
+        <Icon
+          key={index}
+          name={index < rating ? 'star' : 'star_outline'}
+          size={15}
+          className={index < rating ? 'text-secondary' : 'text-outline'}
+        />
+      ))}
+    </span>
+  );
+}
 
-    const matchesCategory = selectedCategory ? item.category === selectedCategory : true;
-    const matchesRating = selectedRating ? String(item.rating) === String(selectedRating) : true;
-    const matchesSentiment = selectedSentiment ? item.sentiment_label === selectedSentiment : true;
+export default function FeedbackTable({
+  feedback,
+  onSelect,
+  selectedId,
+  maxRows,
+  emptyMessage = 'No responses match the current filters.',
+  showComment = false,
+}) {
+  const rows = maxRows ? (feedback || []).slice(0, maxRows) : feedback || [];
 
-    return matchesSearch && matchesCategory && matchesRating && matchesSentiment;
-  });
-
-  if (limit) {
-    filteredData = filteredData.slice(0, limit);
+  if (rows.length === 0) {
+    return (
+      <div className="py-space-xl text-center">
+        <Icon name="search_off" size={32} className="text-outline" />
+        <p className="font-body-md text-body-md text-on-surface-variant mt-2">{emptyMessage}</p>
+      </div>
+    );
   }
 
-  // Export CSV feature
-  const exportToCSV = () => {
-    const headers = ['ID', 'Course', 'Faculty', 'Category', 'Rating', 'Comment', 'Sentiment', 'Anonymous', 'Date'];
-    const rows = filteredData.map(f => [
-      f.id,
-      `"${f.course_name || ''}"`,
-      `"${f.faculty_name || ''}"`,
-      `"${f.category || ''}"`,
-      f.rating,
-      `"${(f.comment || '').replace(/"/g, '""')}"`,
-      f.sentiment_label,
-      f.is_anonymous ? 'Yes' : 'No',
-      new Date(f.created_at).toLocaleDateString()
-    ]);
-
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Student_Feedback_Export_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const getSentimentBadge = (label) => {
-    if (label === 'positive') return <span className="badge badge-positive">Positive</span>;
-    if (label === 'negative') return <span className="badge badge-negative">Negative</span>;
-    return <span className="badge badge-neutral">Neutral</span>;
-  };
-
   return (
-    <div className="space-y-4">
-      
-      {showFilters && (
-        <div className="glass-card p-4 space-y-3">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search feedback comments, course, or faculty..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-control pl-9 text-sm"
-              />
-            </div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead>
+          <tr className="border-b border-outline-variant">
+            <th className="overline text-on-surface-variant py-space-sm pr-space-sm whitespace-nowrap">Ref</th>
+            <th className="overline text-on-surface-variant py-space-sm pr-space-sm whitespace-nowrap">Respondent</th>
+            <th className="overline text-on-surface-variant py-space-sm pr-space-sm whitespace-nowrap">Course</th>
+            <th className="overline text-on-surface-variant py-space-sm pr-space-sm whitespace-nowrap">Category</th>
+            <th className="overline text-on-surface-variant py-space-sm pr-space-sm whitespace-nowrap">Rating</th>
+            <th className="overline text-on-surface-variant py-space-sm pr-space-sm whitespace-nowrap">Sentiment</th>
+            <th className="overline text-on-surface-variant py-space-sm pr-space-sm whitespace-nowrap">Logged</th>
+            {onSelect && <th className="py-space-sm" aria-label="Inspect" />}
+          </tr>
+        </thead>
 
-            {/* Export Button */}
-            <button 
-              onClick={exportToCSV}
-              className="btn btn-secondary btn-sm flex items-center gap-1.5 shrink-0"
-              disabled={filteredData.length === 0}
-            >
-              <Download size={14} />
-              Export CSV
-            </button>
-          </div>
+        <tbody>
+          {rows.map((row, index) => {
+            const sentiment = SENTIMENT[row.sentiment_label] || SENTIMENT.neutral;
+            const isSelected = selectedId === row.id;
 
-          {/* Filters Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-slate-800">
-            <div>
-              <label className="form-label text-[11px] mb-1">Filter Category</label>
-              <select 
-                value={selectedCategory} 
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="form-select text-xs py-1.5"
+            return (
+              <tr
+                key={row.id ?? index}
+                onClick={onSelect ? () => onSelect(row) : undefined}
+                className={`border-b border-outline-variant/50 transition-colors ${
+                  onSelect ? 'cursor-pointer hover:bg-surface-container-low' : ''
+                } ${isSelected ? 'bg-primary-container/30' : ''}`}
               >
-                <option value="">All Categories</option>
-                {categories.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
+                <td className="py-space-sm pr-space-sm font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">
+                  {String(row.id ?? index).slice(0, 8).toUpperCase()}
+                </td>
 
-            <div>
-              <label className="form-label text-[11px] mb-1">Filter Rating</label>
-              <select 
-                value={selectedRating} 
-                onChange={(e) => setSelectedRating(e.target.value)}
-                className="form-select text-xs py-1.5"
-              >
-                <option value="">All Ratings (1-5)</option>
-                {[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>)}
-              </select>
-            </div>
+                <td className="py-space-sm pr-space-sm whitespace-nowrap">
+                  <span className="font-body-md text-body-md text-on-surface flex items-center gap-1.5">
+                    {row.is_anonymous ? (
+                      <>
+                        <Icon name="incognito" size={15} className="text-outline" />
+                        <span className="text-on-surface-variant">Anonymous</span>
+                      </>
+                    ) : (
+                      row.student_name || '—'
+                    )}
+                  </span>
+                </td>
 
-            <div>
-              <label className="form-label text-[11px] mb-1">Filter Sentiment</label>
-              <select 
-                value={selectedSentiment} 
-                onChange={(e) => setSelectedSentiment(e.target.value)}
-                className="form-select text-xs py-1.5"
-              >
-                <option value="">All Sentiments</option>
-                <option value="positive">Positive</option>
-                <option value="negative">Negative</option>
-                <option value="neutral">Neutral</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      )}
+                <td className="py-space-sm pr-space-sm font-body-sm text-body-sm text-on-surface whitespace-nowrap">
+                  {shortCourse(row.course_name)}
+                </td>
 
-      {/* Results Count */}
-      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
-        <span>Showing {filteredData.length} response{filteredData.length !== 1 ? 's' : ''}</span>
-        {(searchTerm || selectedCategory || selectedRating || selectedSentiment) && (
-          <button 
-            onClick={() => { setSearchTerm(''); setSelectedCategory(''); setSelectedRating(''); setSelectedSentiment(''); }}
-            className="text-indigo-400 hover:underline"
-          >
-            Clear Filters
-          </button>
-        )}
-      </div>
+                <td className="py-space-sm pr-space-sm font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                  {row.category || '—'}
+                </td>
 
-      {/* Table Display */}
-      <div className="glass-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-900/80 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
-              <tr>
-                <th className="p-3.5">Student / Dept</th>
-                <th className="p-3.5">Course & Faculty</th>
-                <th className="p-3.5">Category</th>
-                <th className="p-3.5">Rating</th>
-                <th className="p-3.5">Comment</th>
-                <th className="p-3.5">Sentiment</th>
-                <th className="p-3.5 text-right">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {filteredData.length > 0 ? (
-                filteredData.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-800/40 transition-colors">
-                    
-                    <td className="p-3.5 whitespace-nowrap">
-                      <div className="font-semibold text-white flex items-center gap-1.5">
-                        <User size={13} className="text-slate-500" />
-                        {row.is_anonymous ? (
-                          <span className="text-slate-400 italic">Anonymous Student</span>
-                        ) : (
-                          row.student_name || 'Student'
-                        )}
-                      </div>
-                      <div className="text-[11px] text-slate-400">{row.department || 'General'}</div>
-                    </td>
+                <td className="py-space-sm pr-space-sm whitespace-nowrap">
+                  <span className="flex items-center gap-2">
+                    <Stars rating={Number(row.rating) || 0} />
+                    <span className="font-label-sm text-label-sm text-on-surface-variant">{row.rating}</span>
+                  </span>
+                </td>
 
-                    <td className="p-3.5">
-                      <div className="font-medium text-slate-200">{row.course_name}</div>
-                      <div className="text-xs text-indigo-400">{row.faculty_name || 'Department Faculty'}</div>
-                    </td>
+                <td className="py-space-sm pr-space-sm whitespace-nowrap">
+                  <span className={`chip ${sentiment.chip}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${sentiment.dot}`} />
+                    {sentiment.label}
+                  </span>
+                </td>
 
-                    <td className="p-3.5 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                        <Tag size={11} className="text-slate-400" />
-                        {row.category}
-                      </span>
-                    </td>
+                <td className="py-space-sm pr-space-sm font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">
+                  {row.created_at ? DATE_FMT.format(new Date(row.created_at)) : '—'}
+                </td>
 
-                    <td className="p-3.5 whitespace-nowrap">
-                      <div className="flex items-center gap-1 text-amber-400 font-bold">
-                        <Star size={14} className="fill-amber-400" />
-                        {row.rating} / 5
-                      </div>
-                    </td>
-
-                    <td className="p-3.5 max-w-xs">
-                      <p className="line-clamp-2 text-slate-300 text-xs leading-relaxed" title={row.comment}>
-                        "{row.comment}"
-                      </p>
-                    </td>
-
-                    <td className="p-3.5 whitespace-nowrap">
-                      {getSentimentBadge(row.sentiment_label)}
-                    </td>
-
-                    <td className="p-3.5 text-right whitespace-nowrap text-xs text-slate-400">
-                      <div className="flex items-center justify-end gap-1">
-                        <Calendar size={12} />
-                        {new Date(row.created_at).toLocaleDateString()}
-                      </div>
-                    </td>
-
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-500">
-                    <AlertCircle size={24} className="mx-auto mb-2 text-slate-600" />
-                    No feedback entries match your search criteria.
+                {showComment && (
+                  <td className="py-space-sm pr-space-sm max-w-md">
+                    <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">{row.comment}</p>
                   </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                )}
 
+                {onSelect && (
+                  <td className="py-space-sm text-right">
+                    <Icon name="chevron_right" size={18} className="text-outline" />
+                  </td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

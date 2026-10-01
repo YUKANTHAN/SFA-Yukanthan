@@ -1,127 +1,141 @@
-import React from 'react';
-import { ThumbsUp, AlertCircle, Sparkles, TrendingUp } from 'lucide-react';
+import { useMemo } from 'react';
+import Icon from './Icon';
+import { tallyThemes } from '../lib/analytics';
 
-export default function TopInsights({ themesList }) {
-  // Aggregate praises and issues
-  const praiseMap = {};
-  const issueMap = {};
+const MAX_ROWS = 3;
 
-  themesList.forEach(item => {
-    if (item.theme_type === 'praise') {
-      praiseMap[item.theme] = (praiseMap[item.theme] || 0) + 1;
-    } else if (item.theme_type === 'issue') {
-      issueMap[item.theme] = (issueMap[item.theme] || 0) + 1;
-    }
-  });
+const COLUMN = {
+  praise: {
+    heading: 'Top 3 Praises',
+    subheading: 'Validated pedagogical strengths',
+    accent: 'bg-on-tertiary-container',
+    iconBg: 'bg-surface-container-low',
+    icon: 'recommend',
+    iconText: 'text-on-tertiary-container',
+    badgeBg: 'bg-surface-container-low',
+    badgeText: 'text-on-tertiary-container',
+    chipBg: 'bg-surface-container-low',
+    footText: 'text-on-tertiary-container',
+    rankBg: 'bg-on-tertiary-container',
+    rankText: 'text-on-tertiary',
+    action: 'Recommend faculty commendations',
+    empty: 'No praise themes detected in this corpus.',
+  },
+  issue: {
+    heading: 'Top 3 Institutional Friction Points',
+    subheading: 'Prioritised operational interventions',
+    accent: 'bg-error',
+    iconBg: 'bg-error-container',
+    icon: 'report_problem',
+    iconText: 'text-error',
+    badgeBg: 'bg-error-container',
+    badgeText: 'text-error',
+    chipBg: 'bg-error-container/20',
+    footText: 'text-error',
+    rankBg: 'bg-error',
+    rankText: 'text-on-error',
+    action: 'Dispatch ticket to Facilities & Academic Senate',
+    empty: 'No issue themes detected in this corpus.',
+  },
+};
 
-  const topPraises = Object.entries(praiseMap)
-    .map(([theme, count]) => ({ theme, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 3);
+function pickQuote(feedback, themeName) {
+  const match = feedback.find((item) => (item.themes || []).includes(themeName));
+  return match?.comment || null;
+}
 
-  const topIssues = Object.entries(issueMap)
-    .map(([theme, count]) => ({ theme, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 3);
-
-  // Generate readable dynamic summary text
-  const praiseText = topPraises.length > 0 
-    ? topPraises.map(p => p.theme.toLowerCase()).join(', ') 
-    : 'consistent academic effort';
-
-  const issueText = topIssues.length > 0 
-    ? topIssues.map(i => i.theme.toLowerCase()).join(', ') 
-    : 'minor operational details';
-
-  const generatedSummary = `Students appreciate ${praiseText}. The most recurring concerns reported by students are ${issueText}.`;
+function ThemeColumn({ variant, entries, feedback, mentions, label }) {
+  const style = COLUMN[variant];
 
   return (
-    <div className="space-y-6">
-      
-      {/* Generated Dashboard Summary Card */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-950/60 via-purple-950/40 to-slate-900 border border-indigo-500/30 flex items-start gap-3 shadow-lg">
-        <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400 mt-0.5 shrink-0">
-          <Sparkles size={20} />
+    <div className="card p-space-lg relative overflow-hidden flex flex-col justify-between">
+      <div className={`absolute top-0 left-0 right-0 h-1.5 ${style.accent}`} />
+
+      <div>
+        <div className="flex items-center justify-between gap-space-sm mb-space-md">
+          <div className="flex items-center gap-space-sm min-w-0">
+            <span className={`p-2 rounded-xl shrink-0 ${style.iconBg}`}>
+              <Icon name={style.icon} size={20} className={style.iconText} />
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-headline-md text-headline-md text-on-surface leading-snug">{style.heading}</h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">{style.subheading}</p>
+            </div>
+          </div>
+
+          <span className={`chip ${style.badgeBg} ${style.badgeText} shrink-0`}>
+            {mentions.toLocaleString('en-US')} {label}
+          </span>
         </div>
-        <div>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5 mb-1">
-            Automated Executive Insights Summary
-          </h4>
-          <p className="text-sm text-slate-200 leading-relaxed italic">
-            "{generatedSummary}"
-          </p>
-        </div>
+
+        {entries.length === 0 ? (
+          <p className="font-body-md text-body-md text-on-surface-variant py-space-lg text-center">{style.empty}</p>
+        ) : (
+          <ul className="space-y-space-md">
+            {entries.slice(0, MAX_ROWS).map((entry, index) => {
+              const quote = pickQuote(feedback, entry.theme);
+              return (
+                <li key={entry.theme} className={`p-space-md ${style.chipBg} rounded-xl`}>
+                  <div className="flex items-center justify-between gap-space-sm">
+                    <div className="flex items-center gap-space-sm min-w-0">
+                      <span
+                        className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center font-label-sm text-[11px] font-bold ${style.rankBg} ${style.rankText}`}
+                      >
+                        {index + 1}
+                      </span>
+                      <span className="font-headline-sm text-headline-sm text-on-surface truncate">{entry.theme}</span>
+                    </div>
+                    <span className={`font-label-sm text-label-sm font-semibold shrink-0 ${style.badgeText}`}>
+                      {entry.count.toLocaleString('en-US')} {entry.count === 1 ? 'review' : 'reviews'}
+                    </span>
+                  </div>
+
+                  {quote && (
+                    <p className="font-body-sm text-body-sm text-on-surface-variant mt-1.5 pl-[1.75rem] italic line-clamp-2">
+                      “{quote}”
+                    </p>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Top 3 Praises Card */}
-        <div className="glass-card p-5 border-emerald-500/20 bg-emerald-950/10">
-          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-emerald-500/20">
-            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">
-              <ThumbsUp size={18} />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Top 3 Praises</h4>
-              <p className="text-xs text-slate-400">Most frequent positive themes extracted</p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {topPraises.length > 0 ? (
-              topPraises.map((item, idx) => (
-                <div key={item.theme} className="flex items-center justify-between p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                  <div className="flex items-center gap-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">
-                      #{idx + 1}
-                    </span>
-                    <span className="text-sm font-semibold text-slate-200">{item.theme}</span>
-                  </div>
-                  <span className="badge badge-positive">
-                    {item.count} mention{item.count > 1 ? 's' : ''}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-slate-500 italic py-2">No praise themes extracted yet.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Top 3 Issues Card */}
-        <div className="glass-card p-5 border-rose-500/20 bg-rose-950/10">
-          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-rose-500/20">
-            <div className="p-2 rounded-lg bg-rose-500/20 text-rose-400">
-              <AlertCircle size={18} />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Top 3 Critical Issues</h4>
-              <p className="text-xs text-slate-400">Most urgent concern areas requiring faculty action</p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {topIssues.length > 0 ? (
-              topIssues.map((item, idx) => (
-                <div key={item.theme} className="flex items-center justify-between p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                  <div className="flex items-center gap-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-xs font-bold">
-                      #{idx + 1}
-                    </span>
-                    <span className="text-sm font-semibold text-slate-200">{item.theme}</span>
-                  </div>
-                  <span className="badge badge-negative">
-                    {item.count} mention{item.count > 1 ? 's' : ''}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-slate-500 italic py-2">No issue themes extracted yet.</p>
-            )}
-          </div>
-        </div>
-
+      <div className={`mt-space-md pt-space-xs flex items-center justify-between gap-space-sm font-headline-sm text-headline-sm font-semibold ${style.footText}`}>
+        <span>{style.action}</span>
+        <Icon name="arrow_forward" size={18} />
       </div>
     </div>
+  );
+}
+
+/**
+ * `feedback` must already carry theme names (see `attachThemes`) so each theme can
+ * be paired with a verbatim quote as evidence.
+ */
+export default function TopInsights({ feedback, themes }) {
+  const { praise, issue } = useMemo(() => tallyThemes(themes), [themes]);
+
+  const praiseMentions = praise.reduce((sum, entry) => sum + entry.count, 0);
+  const issueMentions = issue.reduce((sum, entry) => sum + entry.count, 0);
+
+  return (
+    <section className="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+      <ThemeColumn
+        variant="praise"
+        entries={praise}
+        feedback={feedback}
+        mentions={praiseMentions}
+        label={praiseMentions === 1 ? 'mention' : 'mentions'}
+      />
+      <ThemeColumn
+        variant="issue"
+        entries={issue}
+        feedback={feedback}
+        mentions={issueMentions}
+        label={issueMentions === 1 ? 'mention' : 'mentions'}
+      />
+    </section>
   );
 }

@@ -1,56 +1,37 @@
-import React from 'react';
+import Icon from './Icon';
 
-export default function StatCard({ title, value, icon: Icon, color = 'indigo', subtext }) {
-  const colorStyles = {
-    indigo: {
-      bg: 'bg-indigo-500/10',
-      border: 'border-indigo-500/20',
-      text: 'text-indigo-400',
-      shadow: 'hover:shadow-indigo-500/10'
-    },
-    amber: {
-      bg: 'bg-amber-500/10',
-      border: 'border-amber-500/20',
-      text: 'text-amber-400',
-      shadow: 'hover:shadow-amber-500/10'
-    },
-    emerald: {
-      bg: 'bg-emerald-500/10',
-      border: 'border-emerald-500/20',
-      text: 'text-emerald-400',
-      shadow: 'hover:shadow-emerald-500/10'
-    },
-    rose: {
-      bg: 'bg-rose-500/10',
-      border: 'border-rose-500/20',
-      text: 'text-rose-400',
-      shadow: 'hover:shadow-rose-500/10'
-    },
-    slate: {
-      bg: 'bg-slate-500/10',
-      border: 'border-slate-500/20',
-      text: 'text-slate-300',
-      shadow: 'hover:shadow-slate-500/10'
-    }
-  };
+const TONES = {
+  primary: { icon: 'stacked_line_chart', bg: 'bg-primary-container', text: 'text-on-primary-container', value: 'text-on-surface' },
+  tertiary: { icon: 'sentiment_satisfied', bg: 'bg-surface-container-low', text: 'text-on-tertiary-container', value: 'text-on-surface' },
+  amber: { icon: 'star', bg: 'bg-secondary-container', text: 'text-on-secondary-container', value: 'text-on-surface' },
+  error: { icon: 'report_problem', bg: 'bg-error-container', text: 'text-on-error-container', value: 'text-on-surface' },
+};
 
-  const style = colorStyles[color] || colorStyles.indigo;
+export default function StatCard({ label, value, suffix, sub, tone = 'primary', icon, progress }) {
+  const t = TONES[tone] || TONES.primary;
+  const iconName = icon || t.icon;
 
   return (
-    <div className={`glass-card p-5 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 border ${style.border} ${style.shadow}`}>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{title}</p>
-          <h3 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">{value}</h3>
-          {subtext && <p className="text-xs text-slate-500 mt-1">{subtext}</p>}
-        </div>
-        
-        {Icon && (
-          <div className={`p-3 rounded-xl ${style.bg} ${style.text}`}>
-            <Icon size={24} />
+    <article className="card-interactive p-space-lg flex items-start gap-space-md">
+      <span className={`p-3 rounded-2xl shrink-0 ${t.bg}`}>
+        <Icon name={iconName} size={24} className={t.text} />
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <p className="overline text-on-surface-variant">{label}</p>
+        <p className={`font-metric-lg-mobile sm:font-metric-lg text-metric-lg text-on-surface leading-tight mt-1`}>
+          {value}
+          {suffix && <span className="font-body-md text-body-md text-on-surface-variant ml-1">{suffix}</span>}
+        </p>
+
+        {typeof progress === 'number' && (
+          <div className="w-full h-1.5 bg-surface-container rounded-full mt-2 overflow-hidden">
+            <div className={`h-full rounded-full ${t.text.replace('text-', 'bg-')}`} style={{ width: `${Math.min(Math.max(progress, 0), 100)}%` }} />
           </div>
         )}
+
+        {sub && <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">{sub}</p>}
       </div>
-    </div>
+    </article>
   );
 }
