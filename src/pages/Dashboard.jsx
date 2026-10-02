@@ -9,11 +9,19 @@ import CategoryBars from '../components/CategoryBars';
 import TopInsights from '../components/TopInsights';
 import FeedbackTable from '../components/FeedbackTable';
 import { useAdminSession } from '../hooks/useAdminSession';
-import { fetchFeedbackList, fetchFeedbackThemes } from '../lib/supabase';
+import {
+  fetchFeedbackList,
+  fetchFeedbackThemes,
+  getCorpusVersion,
+  subscribeToCorpusChanges,
+} from '../lib/api';
 import { attachThemes, summarize } from '../lib/analytics';
 import { BRAND } from '../lib/design';
 
 const PREVIEW_ROWS = 6;
+
+/** Background refetch cadence while the tab is visible. */
+const POLL_INTERVAL_MS = 20_000;
 
 function Banner({ tone, icon, children }) {
   const tones = {
@@ -38,7 +46,7 @@ function LoadingState() {
   );
 }
 
-function AccessDenied() {
+function AccessDenied({ error }) {
   const navigate = useNavigate();
 
   return (
@@ -46,48 +54,97 @@ function AccessDenied() {
       <span className="inline-flex p-space-lg rounded-2xl bg-error-container text-on-error-container">
         <Icon name="shield_lock" size={32} />
       </span>
-      <h2 className="font-headline-md text-headline-md text-on-surface">Admin clearance required</h2>
+      <h2 className="font-headline-md text-headline-md text-on-surface">
+        {error ? 'Analytics API unreachable' : 'Admin clearance required'}
+      </h2>
       <p className="font-body-md text-body-md text-on-surface-variant">
-        This corpus contains identifiable student submissions and is restricted to authenticated faculty
-        administrators.
+        {error || (
+          <>
+            This corpus contains identifiable student submissions and is restricted to authenticated faculty
+            administrators.
+          </>
+        )}
       </p>
-      <button type="button" className="btn-primary" onClick={() => navigate('/login')}>
-        <Icon name="login" size={18} />
-        Go to admin login
-      </button>
+      {error ? (
+        <button type="button" className="btn-primary" onClick={() => window.location.reload()}>
+          <Icon name="refresh" size={18} />
+          Retry
+        </button>
+      ) : (
+        <button type="button" className="btn-primary" onClick={() => navigate('/login')}>
+          <Icon name="login" size={18} />
+          Go to admin login
+        </button>
+      )}
     </div>
   );
 }
 
 export default function Dashboard() {
-  const { isAdmin, loading: sessionLoading } = useAdminSession();
+  const { isAdmin, loading: sessionLoading, error: sessionError } = useAdminSession();
 
   const [feedback, setFeedback] = useState([]);
   const [themes, setThemes] = useState([]);
   const [degraded, setDegraded] = useState(false);
   const [notice, setNotice] = useState(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadedVersion, setLoadedVersion] = useState(() => getCorpusVersion());
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    const [listResult, themeResult] = await Promise.all([fetchFeedbackList(), fetchFeedbackThemes()]);
+  const load = useCallback(async ({ silent = false } = {}) => {
+    // A background refresh must not blank the charts the operator is reading.
+    if (!silent) setLoading(true);
 
-    setFeedback(listResult.items);
-    setThemes(themeResult.items);
-    setDegraded(listResult.degraded || themeResult.degraded);
-    setNotice(listResult.notice || themeResult.notice);
-    setLoading(false);
+    try {
+      const [listResult, themeResult] = await Promise.all([fetchFeedbackList(), fetchFeedbackThemes()]);
+
+      // Both readers return the envelope declared by the API. Anything else is
+      // a contract break and should surface here rather than as quiet zeros.
+      setFeedback(listResult?.items ?? []);
+      setThemes(themeResult?.items ?? []);
+      setDegraded(Boolean(listResult?.degraded || themeResult?.degraded));
+      setNotice(listResult?.notice || themeResult?.notice || null);
+      setError(null);
+      setLoadedVersion(getCorpusVersion());
+    } catch (err) {
+      setError(err.message || 'Could not load the feedback corpus.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    if (isAdmin) load();
+    if (!isAdmin) return undefined;
+    load();
+    return undefined;
   }, [isAdmin, load]);
+
+  // Keep the view honest without the operator reaching for the refresh button:
+  // a submission in another tab, a return to the tab, and a slow poll all
+  // converge on the same refetch.
+  useEffect(() => {
+    if (!isAdmin) return undefined;
+
+    const refresh = () => {
+      if (document.visibilityState === 'visible') load({ silent: true });
+    };
+
+    const unsubscribe = subscribeToCorpusChanges(() => {
+      if (getCorpusVersion() !== loadedVersion) load({ silent: true });
+    });
+
+    const interval = window.setInterval(refresh, POLL_INTERVAL_MS);
+    return () => {
+      unsubscribe();
+      window.clearInterval(interval);
+    };
+  }, [isAdmin, load, loadedVersion]);
 
   const enriched = useMemo(() => attachThemes(feedback, themes), [feedback, themes]);
   const stats = useMemo(() => summarize(enriched), [enriched]);
 
   if (sessionLoading) return <LoadingState />;
-  if (!isAdmin) return <AccessDenied />;
+  if (!isAdmin) return <AccessDenied error={sessionError} />;
 
   return (
     <div className="space-y-gutter py-gutter animate-fade-in">
@@ -103,7 +160,7 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-space-sm">
-          <button type="button" className="btn-secondary" onClick={load} disabled={loading}>
+          <button type="button" className="btn-secondary" onClick={() => load()} disabled={loading}>
             <Icon name="refresh" size={18} className={loading ? 'animate-spin' : ''} />
             Refresh
           </button>
@@ -114,7 +171,13 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {degraded && notice && (
+      {error && (
+        <Banner tone="error" icon="error">
+          {error} Showing the last data this screen managed to load.
+        </Banner>
+      )}
+
+      {!error && degraded && notice && (
         <Banner tone="warn" icon="cloud_off">
           {notice}
         </Banner>

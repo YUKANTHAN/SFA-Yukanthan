@@ -7,11 +7,22 @@ dist-ssr/
 build/
 .vite/
 
-# Local environment — never commit real credentials.
+# Local environment - never commit real credentials.
 # .env.example is intentionally NOT ignored: it is the tracked template.
 .env
 .env.local
 .env.*.local
+
+# Python backend
+backend/.venv/
+venv/
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
 
 # Logs
 *.log

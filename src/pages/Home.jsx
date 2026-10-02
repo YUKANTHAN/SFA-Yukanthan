@@ -103,8 +103,8 @@ const STEPS = [
     iconBg: 'bg-secondary-fixed',
     iconColor: 'text-secondary',
     icon: 'psychology_alt',
-    title: 'AI Analyzes Sentiment',
-    body: 'Incoming verbatims are processed by contextual models, tagging sentiment polarity, tone urgency and categorising thematic academic topics.',
+    title: 'Sentiment & Themes Extracted',
+    body: 'Each verbatim is scored server-side against a curated lexicon and tagged with its polarity and the academic topics it raises, so every label is reproducible and auditable.',
   },
   {
     number: '03',

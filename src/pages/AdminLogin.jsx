@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon';
 import Logo from '../components/Logo';
-import { isSupabaseConfigured, loginAdmin } from '../lib/supabase';
+import { loginAdmin } from '../lib/api';
 import { useAdminSession } from '../hooks/useAdminSession';
 
 function BrandPanel() {
@@ -141,6 +141,7 @@ export default function AdminLogin() {
     setStatus('Verifying institutional credentials…');
 
     try {
+      // Credentials go to the API, never to a database from the browser.
       await loginAdmin(email.trim(), password);
       setStatus('Credentials verified. Opening your workspace…');
       await refresh();
@@ -151,11 +152,6 @@ export default function AdminLogin() {
     } finally {
       setBusy(false);
     }
-  };
-
-  const fillDemo = () => {
-    setEmail('admin@college.edu');
-    setPassword('admin123');
   };
 
   return (
@@ -181,25 +177,6 @@ export default function AdminLogin() {
                 Access institutional analytics, feedback streams and departmental reports.
               </p>
             </div>
-
-            {!isSupabaseConfigured && (
-              <div className="mb-6 p-3 rounded-lg bg-surface-container-low flex items-start gap-2.5">
-                <Icon name="info" size={18} className="text-secondary shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-body-sm text-body-sm text-on-surface">
-                    Running in demo mode. Use{' '}
-                    <button
-                      type="button"
-                      onClick={fillDemo}
-                      className="text-secondary font-semibold hover:underline"
-                    >
-                      admin@college.edu / admin123
-                    </button>
-                    .
-                  </p>
-                </div>
-              </div>
-            )}
 
             <div className="space-y-3 mb-6">
               <button type="button" disabled className="w-full h-11 px-4 rounded-lg bg-surface-container-low text-on-surface flex items-center justify-center gap-3 shadow-e1 opacity-70 cursor-not-allowed">

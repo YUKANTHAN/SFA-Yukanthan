@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import Icon from '../components/Icon';
 import RatingInput from '../components/RatingInput';
 import { CATEGORIES, COMMENT_MAX_LENGTH, COURSES, DEPARTMENTS, RATING_LABELS } from '../lib/design';
-import { isSupabaseConfigured, submitFeedbackData } from '../lib/supabase';
+import { submitFeedback } from '../lib/api';
 
 const DRAFT_KEY = 'student_feedback_draft';
+const RECEIPT_KEY = 'last_submitted_feedback';
 
 const EMPTY_FORM = {
   // `course_code` is the select's value; `course_name` is the human-readable
@@ -74,6 +75,9 @@ function SuccessModal({ result, onAnother }) {
           <button type="button" onClick={onAnother} className="btn-secondary flex-1">
             Evaluate Another
           </button>
+          <Link to="/success" className="btn-ghost flex-1">
+            View receipt
+          </Link>
           <Link to="/dashboard" className="btn-primary flex-1">
             Return to Overview
           </Link>
@@ -167,10 +171,14 @@ export default function SubmitFeedback() {
     }
 
     setSubmitting(true);
+    setErrors((prev) => ({ ...prev, submit: undefined }));
+
     try {
       const payload = {
-        // The design's form has no identity field, so attribution is never sent.
-        student_name: null,
+        // The form has no identity field, so attribution is never sent. The
+        // API discards `student_name` regardless - anonymity is enforced
+        // server-side, not by the absence of a field here.
+        course_code: form.course_code,
         course_name: form.course_name,
         department: form.department,
         faculty_name: form.faculty_name.trim(),
@@ -180,11 +188,17 @@ export default function SubmitFeedback() {
         is_anonymous: form.is_anonymous,
       };
 
-      const saved = await submitFeedbackData(payload);
+      // A throw here means nothing was saved. The success modal is shown only
+      // after the API confirms the row exists.
+      const saved = await submitFeedback(payload);
+
       sessionStorage.removeItem(DRAFT_KEY);
+      sessionStorage.setItem(RECEIPT_KEY, JSON.stringify(saved));
       setResult(saved);
     } catch (error) {
-      setErrors({ submit: error.message || 'Could not submit your feedback. Please try again.' });
+      setErrors({
+        submit: error.message || 'Could not submit your feedback. Please try again.',
+      });
     } finally {
       setSubmitting(false);
     }
@@ -478,8 +492,8 @@ export default function SubmitFeedback() {
             <div className="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm mt-1">
               <Icon name="info" size={15} className="text-secondary" />
               <span>
-                Sentiment is classified by a{' '}
-                {isSupabaseConfigured ? 'database trigger' : 'client-side'} rule engine.
+                Sentiment and themes are classified by the server-side rule engine, so the
+                dashboard reads the same verdict this receipt shows.
               </span>
             </div>
           </div>

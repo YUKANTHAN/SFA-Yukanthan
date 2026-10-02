@@ -2,7 +2,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAdminSession } from '../hooks/useAdminSession';
 import Icon from './Icon';
 import Logo from './Logo';
-import SupabaseStatusBadge from './SupabaseStatusBadge';
+import ApiStatusBadge from './ApiStatusBadge';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Overview' },
@@ -44,7 +44,7 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-space-sm">
-          <SupabaseStatusBadge />
+          <ApiStatusBadge />
 
           {isAdmin && !loading ? (
             <>

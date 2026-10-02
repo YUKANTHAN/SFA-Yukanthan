@@ -4,7 +4,7 @@ import Icon from '../components/Icon';
 import FeedbackTable from '../components/FeedbackTable';
 import SentimentDonut from '../components/SentimentDonut';
 import { useAdminSession } from '../hooks/useAdminSession';
-import { fetchFeedbackList, fetchFeedbackThemes } from '../lib/supabase';
+import { fetchFeedbackList, fetchFeedbackThemes } from '../lib/api';
 import { attachThemes, downloadText, filterFeedback, optionsFrom, summarize, toCsv } from '../lib/analytics';
 import { CATEGORIES, SENTIMENT, SENTIMENT_KEYS } from '../lib/design';
 
@@ -34,7 +34,7 @@ function Spinner() {
   );
 }
 
-function AccessDenied() {
+function AccessDenied({ error }) {
   const navigate = useNavigate();
 
   return (
@@ -42,14 +42,27 @@ function AccessDenied() {
       <span className="inline-flex p-space-lg rounded-2xl bg-error-container text-on-error-container">
         <Icon name="shield_lock" size={32} />
       </span>
-      <h2 className="font-headline-md text-headline-md text-on-surface">Admin clearance required</h2>
+      <h2 className="font-headline-md text-headline-md text-on-surface">
+        {error ? 'Analytics API unreachable' : 'Admin clearance required'}
+      </h2>
       <p className="font-body-md text-body-md text-on-surface-variant">
-        Individual student submissions are restricted to authenticated faculty administrators.
+        {error || (
+          <>
+            Individual student submissions are restricted to authenticated faculty administrators.
+          </>
+        )}
       </p>
-      <button type="button" className="btn-primary" onClick={() => navigate('/login')}>
-        <Icon name="login" size={18} />
-        Go to admin login
-      </button>
+      {error ? (
+        <button type="button" className="btn-primary" onClick={() => window.location.reload()}>
+          <Icon name="refresh" size={18} />
+          Retry
+        </button>
+      ) : (
+        <button type="button" className="btn-primary" onClick={() => navigate('/login')}>
+          <Icon name="login" size={18} />
+          Go to admin login
+        </button>
+      )}
     </div>
   );
 }
@@ -182,12 +195,13 @@ function DetailPanel({ row, onClose }) {
 }
 
 export default function FeedbackDetails() {
-  const { isAdmin, loading: sessionLoading } = useAdminSession();
+  const { isAdmin, loading: sessionLoading, error: sessionError } = useAdminSession();
 
   const [feedback, setFeedback] = useState([]);
   const [themes, setThemes] = useState([]);
   const [degraded, setDegraded] = useState(false);
   const [notice, setNotice] = useState(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
 
@@ -199,13 +213,19 @@ export default function FeedbackDetails() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [listResult, themeResult] = await Promise.all([fetchFeedbackList(), fetchFeedbackThemes()]);
+    try {
+      const [listResult, themeResult] = await Promise.all([fetchFeedbackList(), fetchFeedbackThemes()]);
 
-    setFeedback(listResult.items);
-    setThemes(themeResult.items);
-    setDegraded(listResult.degraded || themeResult.degraded);
-    setNotice(listResult.notice || themeResult.notice);
-    setLoading(false);
+      setFeedback(listResult?.items ?? []);
+      setThemes(themeResult?.items ?? []);
+      setDegraded(Boolean(listResult?.degraded || themeResult?.degraded));
+      setNotice(listResult?.notice || themeResult?.notice || null);
+      setError(null);
+    } catch (err) {
+      setError(err.message || 'Could not load the feedback corpus.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -238,7 +258,7 @@ export default function FeedbackDetails() {
   };
 
   if (sessionLoading) return <Spinner />;
-  if (!isAdmin) return <AccessDenied />;
+  if (!isAdmin) return <AccessDenied error={sessionError} />;
 
   return (
     <div className="space-y-gutter py-gutter animate-fade-in">
@@ -265,7 +285,17 @@ export default function FeedbackDetails() {
         </div>
       </header>
 
-      {degraded && notice && (
+      {error && (
+        <div
+          className="flex items-start gap-space-sm p-space-md rounded-xl bg-error-container text-on-error-container font-body-sm text-body-sm"
+          role="alert"
+        >
+          <Icon name="error" size={18} className="shrink-0 mt-px" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {!error && degraded && notice && (
         <div
           className="flex items-start gap-space-sm p-space-md rounded-xl bg-secondary-container/15 text-on-secondary-container font-body-sm text-body-sm"
           role="status"

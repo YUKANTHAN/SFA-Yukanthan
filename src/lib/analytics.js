@@ -6,7 +6,9 @@
  * large corpus is not repeated per chart.
  */
 
-import { SENTIMENT_KEYS } from './design';
+// Explicit extension so `node --test` can import this module directly; Vite
+// resolves either form.
+import { SENTIMENT_KEYS } from './design.js';
 
 const num = (value) => (Number.isFinite(Number(value)) ? Number(value) : null);
 
